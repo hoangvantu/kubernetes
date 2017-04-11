@@ -21,7 +21,7 @@ FROM java:openjdk-8-jre
 MAINTAINER Mik Vyatskov "vmik@google.com"
 
 ENV DEBIAN_FRONTEND noninteractive
-ENV ELASTICSEARCH_VERSION 2.4.1
+ENV ELASTICSEARCH_VERSION 2.4.4
 
 RUN apt-get update \
     && apt-get install -y curl \
@@ -48,5 +48,8 @@ RUN useradd --no-create-home --user-group elasticsearch \
 
 VOLUME ["/data"]
 EXPOSE 9200 9300
+
+RUN export NODE_NAME=`ip addr | grep eth0 | grep inet | awk '{print $2}'` ; NODE_DATA=1 MINIMUM_MASTER_NODES=1 NODE_MASTER=true TRANSPORT_PORT=9300 HTTP_PORT=9200 /elasticsearch/bin/plugin install lmenezes/elasticsearch-kopf/2.1.1
+RUN export NODE_NAME=`ip addr | grep eth0 | grep inet | awk '{print $2}'` ; NODE_DATA=1 MINIMUM_MASTER_NODES=1 NODE_MASTER=true TRANSPORT_PORT=9300 HTTP_PORT=9200 /elasticsearch/bin/plugin install appbaseio/dejavu/0.12.1
 
 CMD /run.sh
